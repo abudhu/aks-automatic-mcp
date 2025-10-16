@@ -48,7 +48,7 @@ az account set --subscription <subscription-id>
 az group create --name rg-aks-automatic --location eastus
 ```
 
-### 3. Deploy the Template
+### 3. Deploy the AKS Template
 
 #### Option A: Using the parameter file
 
@@ -82,6 +82,29 @@ az aks get-credentials --resource-group rg-aks-automatic --name aks-automatic-cl
 kubectl get nodes
 kubectl get pods -A
 ```
+
+## Publish MCP Weather API with API Management
+
+Use `apim-mcp.bicep` to provision an API Management instance that fronts the MCP Weather server.
+
+```bash
+az deployment group create \
+  --resource-group rg-aks-automatic \
+  --template-file apim-mcp.bicep \
+  --parameters apim-mcp.bicepparam \
+  --parameters mcpBackendUrl=https://<ingress-or-load-balancer-for-mcp>
+```
+
+Update `apim-mcp.bicepparam` with your publisher details, SKU preferences, and the public endpoint that exposes the MCP Weather server running in AKS before running the deployment.
+
+## Create GPT-4.1 Agent in Azure AI Foundry
+
+1. Capture the API Management invoke URL and (optionally) subscription key for the weather API.
+2. Configure an Azure AI Foundry project connected to an Azure OpenAI resource with a `gpt-4.1` deployment.
+3. Populate the environment variables listed in `agents/README.md` or update Cell 3 in `deploy-aks-automatic.ipynb`.
+4. Run the agent creation steps in the notebook (Step 12 installs dependencies, Step 13 creates the agent).
+5. Use Step 14 to invoke the agent and verify it returns weather data. The raw response is saved to `agents/agent_invoke_response.json`.
+6. Note the generated agent ID in `agents/agent_response.json` for subsequent conversations or run orchestration inside Azure AI Foundry.
 
 ## Parameters
 
@@ -147,6 +170,8 @@ az group delete --name rg-aks-automatic --yes --no-wait
 - [AKS Automatic Documentation](https://learn.microsoft.com/azure/aks/automatic)
 - [Azure Bicep Documentation](https://learn.microsoft.com/azure/azure-resource-manager/bicep/)
 - [AKS Best Practices](https://learn.microsoft.com/azure/aks/best-practices)
+- [API Management Documentation](https://learn.microsoft.com/azure/api-management/)
+- [Azure AI Foundry Agents](https://learn.microsoft.com/azure/ai-services/agents/overview)
 
 ## License
 
