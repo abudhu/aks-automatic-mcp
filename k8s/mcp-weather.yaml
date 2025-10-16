@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-weather-server
+  labels:
+    app: mcp-weather-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcp-weather-server
+  template:
+    metadata:
+      labels:
+        app: mcp-weather-server
+    spec:
+      containers:
+        - name: mcp-weather-server
+          image: <your-registry>.azurecr.io/mcp-weather-server:latest
+          imagePullPolicy: IfNotPresent
+          command: ["node", "dist/index.js"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi

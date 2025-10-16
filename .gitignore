@@ -1,0 +1,18 @@
+# Azure deployment files
+*.log
+*.cache
+
+# Bicep build output
+*.json
+!main.json
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
+
+# Environment files
+.env
+.env.local
